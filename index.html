@@ -13,6 +13,7 @@
     --accent: #a8442f;
     --band-a: #e7ddc8;
     --band-b: #ddd0b3;
+    --popup-bg: #fffdf7;
   }
   *{ box-sizing: border-box; }
   html, body{
@@ -24,7 +25,7 @@
     height:100%;
   }
   header{
-    padding: 28px 32px 14px;
+    padding: 24px 32px 12px;
     border-bottom: 1px solid var(--rule);
   }
   h1{
@@ -37,7 +38,6 @@
     margin:0;
     font-size: 0.95rem;
     color: #5b5344;
-    font-family: Georgia, serif;
     max-width: 60ch;
   }
   .hint{
@@ -59,7 +59,7 @@
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     width: 100%;
-    height: calc(100vh - 108px);
+    height: calc(100vh - 100px);
     position: relative;
   }
 
@@ -72,7 +72,7 @@
 
   .eras{
     position: relative;
-    height: 46px;
+    height: 42px;
     flex: 0 0 auto;
     display: flex;
   }
@@ -82,12 +82,10 @@
     align-items:center;
     padding-left: 10px;
     font-size: 0.78rem;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
     color: #4a4030;
     white-space: nowrap;
     border-right: 1px solid var(--rule);
-    position: sticky;
-    left: 0;
   }
   .era span{
     position: sticky;
@@ -106,6 +104,33 @@
     right: 0;
     height: 2px;
     background: var(--line);
+    pointer-events: none;
+  }
+
+  /* the clickable hit-area for one 50-year increment */
+  .increment{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+  .increment:hover .tick{
+    background: var(--accent);
+  }
+  .increment:focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  .increment.active .tick{
+    background: var(--accent);
+    width: 2px;
   }
 
   .tick{
@@ -113,80 +138,95 @@
     top: 50%;
     width: 1px;
     background: var(--rule);
+    pointer-events: none;
   }
-  .tick.minor{ height: 14px; margin-top: -7px; }
-  .tick.mid{ height: 22px; margin-top: -11px; background: #8f846d; }
+  .tick.minor{ height: 12px; margin-top: -6px; }
+  .tick.mid{ height: 20px; margin-top: -10px; background: #8f846d; }
   .tick.major{ height: 34px; margin-top: -17px; background: var(--ink); width: 1.5px; }
+
+  .info-dot{
+    position: absolute;
+    top: 50%;
+    margin-top: 20px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    pointer-events: none;
+  }
 
   .label{
     position: absolute;
     top: 50%;
-    margin-top: 22px;
+    margin-top: 26px;
     transform: translateX(-50%);
-    font-size: 0.72rem;
-    color: #5b5344;
-    white-space: nowrap;
-  }
-  .label.major{
+    font-size: 0.78rem;
     font-weight: 700;
     color: var(--ink);
-    font-size: 0.8rem;
-    margin-top: 24px;
+    white-space: nowrap;
+    pointer-events: none;
   }
 
-  .event{
-    position: absolute;
-    bottom: 50%;
-    margin-bottom: 8px;
-    transform: translateX(-50%);
-    text-align: center;
-    max-width: 140px;
-  }
-  .event .dot{
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    margin: 0 auto 6px;
-  }
-  .event .txt{
-    font-size: 0.72rem;
-    line-height: 1.25;
-    color: #3d3527;
-  }
-
-  .now-flag{
-    position: absolute;
-    bottom: 50%;
-    margin-bottom: 8px;
-    right: 0;
-    transform: translateX(50%);
-    text-align: center;
-  }
-  .now-flag .dot{
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--ink);
-    margin: 0 auto 6px;
-  }
-  .now-flag .txt{
-    font-size: 0.75rem;
-    font-weight: 700;
-  }
-
-  .start-flag{
+  .start-flag, .now-flag-label{
     position: absolute;
     top: 50%;
-    left: 0;
-    margin-top: -70px;
-    text-align: center;
-    transform: translateX(0);
-  }
-  .start-flag .txt{
-    font-size: 0.75rem;
+    margin-top: -58px;
+    transform: translateX(-50%);
+    font-size: 0.78rem;
     font-weight: 700;
     white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .popup{
+    position: absolute;
+    top: 50%;
+    margin-top: -22px;
+    transform: translate(-50%, -100%);
+    background: var(--popup-bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    padding: 10px 12px;
+    min-width: 160px;
+    max-width: 240px;
+    box-shadow: 3px 3px 0 rgba(38,32,25,0.15);
+    z-index: 20;
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+  .popup .popup-year{
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .popup .popup-empty{
+    color: #7a7160;
+    font-style: italic;
+  }
+  .popup::after{
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 8px solid var(--ink);
+  }
+  .popup::before{
+    content: "";
+    position: absolute;
+    bottom: -5.5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 7px solid var(--popup-bg);
+    z-index: 1;
   }
 </style>
 </head>
@@ -194,8 +234,8 @@
 
 <header>
   <h1>Twelve Thousand Years</h1>
-  <p class="sub">A single line from 10,000 BCE to today. Each small mark is 50 years.</p>
-  <p class="hint">Scroll right to move forward in time — <kbd>shift</kbd> + scroll, a trackpad swipe, or drag the scrollbar all work.</p>
+  <p class="sub">A single line from 10,000 BCE to today. Every mark is 50 years — click one to see what happened.</p>
+  <p class="hint">Scroll right to move forward in time (<kbd>shift</kbd> + scroll, trackpad swipe, or drag the scrollbar) — click any mark for details, click it again to close.</p>
 </header>
 
 <div id="scroller">
@@ -211,10 +251,10 @@
   // ---- configuration ----
   const START_YEAR = -10000;   // 10000 BCE
   const CURRENT_YEAR = 2026;
-  const STEP = 50;             // years per minor tick
-  const PX_PER_STEP = 34;      // pixel spacing between minor ticks
-  const MAJOR_EVERY = 10;      // every 10th tick (500 yrs) is a major tick+label
-  const MID_EVERY = 2;         // every 2nd tick (100 yrs) is a mid tick
+  const STEP = 50;             // years per increment
+  const PX_PER_STEP = 90;      // spread out: pixels between increments
+  const MAJOR_EVERY = 10;      // every 10th increment (500 yrs) gets a permanent label
+  const MID_EVERY = 2;         // every 2nd increment (100 yrs) gets a mid-size tick
 
   const eras = [
     { start: -10000, end: -3300, name: "Neolithic — farming, pottery, first villages" },
@@ -227,50 +267,62 @@
     { start: 1945,   end: 2026,  name: "Contemporary Era" },
   ];
 
+  // real-world events; each will snap to its nearest 50-year increment
   const events = [
-    { year: -9000,  text: "First farming settlements (Levant)" },
-    { year: -3500,  text: "Wheel & early writing (Sumer)" },
-    { year: -2560,  text: "Great Pyramid of Giza" },
-    { year: -1200,  text: "Bronze Age collapse" },
-    { year: -776,   text: "First recorded Olympic Games" },
-    { year: -221,   text: "Qin unifies China" },
-    { year: 0,      text: "Start of the Common Era" },
-    { year: 610,    text: "Rise of Islam" },
-    { year: 1088,   text: "First university (Bologna)" },
-    { year: 1347,   text: "Black Death reaches Europe" },
-    { year: 1492,   text: "Columbus reaches the Americas" },
-    { year: 1687,   text: "Newton's Principia" },
-    { year: 1776,   text: "US Declaration of Independence" },
-    { year: 1859,   text: "Darwin's Origin of Species" },
-    { year: 1945,   text: "End of World War II" },
-    { year: 1969,   text: "Moon landing" },
-    { year: 1991,   text: "World Wide Web goes public" },
-    { year: 2020,   text: "COVID-19 pandemic" },
+    { year: -9000,  text: "First farming settlements take root in the Levant." },
+    { year: -3500,  text: "The wheel and early writing appear in Sumer." },
+    { year: -2560,  text: "The Great Pyramid of Giza is completed." },
+    { year: -1200,  text: "Bronze Age collapse — major eastern Mediterranean powers fall within decades of each other." },
+    { year: -776,   text: "First recorded Olympic Games, held in Olympia." },
+    { year: -221,   text: "Qin Shi Huang unifies China under one empire." },
+    { year: 0,      text: "Conventional start of the Common Era." },
+    { year: 610,    text: "Traditional date for the founding of Islam." },
+    { year: 1088,   text: "The University of Bologna is founded, one of the first universities." },
+    { year: 1347,   text: "The Black Death reaches Europe." },
+    { year: 1492,   text: "Columbus's first voyage reaches the Americas." },
+    { year: 1687,   text: "Newton publishes the Principia Mathematica." },
+    { year: 1776,   text: "US Declaration of Independence." },
+    { year: 1859,   text: "Darwin publishes On the Origin of Species." },
+    { year: 1945,   text: "End of World War II." },
+    { year: 1969,   text: "Apollo 11 — first crewed Moon landing." },
+    { year: 1991,   text: "The World Wide Web becomes publicly available." },
+    { year: 2020,   text: "The COVID-19 pandemic spreads globally." },
   ];
 
   const totalSteps = Math.round((CURRENT_YEAR - START_YEAR) / STEP);
-  const totalWidth = totalSteps * PX_PER_STEP + 160;
+  const totalWidth = totalSteps * PX_PER_STEP + 200;
 
   function yearToLabel(y){
     if (y === 0) return "0";
     return Math.abs(y) + (y < 0 ? " BCE" : " CE");
   }
-  function yearToX(y){
-    return (y - START_YEAR) / STEP * PX_PER_STEP;
+  function stepToYear(i){
+    return START_YEAR + i * STEP;
+  }
+  function stepToX(i){
+    return i * PX_PER_STEP;
   }
 
-  // size the scrollable track
+  // group events onto their nearest increment index
+  const eventsByStep = {};
+  events.forEach(ev => {
+    const idx = Math.round((ev.year - START_YEAR) / STEP);
+    if (!eventsByStep[idx]) eventsByStep[idx] = [];
+    eventsByStep[idx].push(ev);
+  });
+
+  // ---- layout ----
   const track = document.getElementById('track');
   const spineWrap = document.getElementById('spineWrap');
   const erasRow = document.getElementById('eras');
   track.style.width = totalWidth + "px";
 
-  // ---- era bands ----
+  // era bands
   eras.forEach((e, i) => {
     const div = document.createElement('div');
     div.className = 'era';
-    const x0 = yearToX(e.start);
-    const x1 = yearToX(Math.min(e.end, CURRENT_YEAR));
+    const x0 = stepToX(Math.round((e.start - START_YEAR) / STEP));
+    const x1 = stepToX(Math.round((Math.min(e.end, CURRENT_YEAR) - START_YEAR) / STEP));
     div.style.width = (x1 - x0) + "px";
     div.style.background = i % 2 === 0 ? 'var(--band-a)' : 'var(--band-b)';
     const span = document.createElement('span');
@@ -279,52 +331,140 @@
     erasRow.appendChild(div);
   });
 
-  // ---- ticks + labels ----
   const frag = document.createDocumentFragment();
-  for (let i = 0; i <= totalSteps; i++){
-    const year = START_YEAR + i * STEP;
-    const x = i * PX_PER_STEP;
 
-    const tick = document.createElement('div');
+  for (let i = 0; i <= totalSteps; i++){
+    const year = stepToYear(i);
+    const x = stepToX(i);
+
+    const btn = document.createElement('button');
+    btn.className = 'increment';
+    btn.style.left = x + "px";
+    btn.style.width = PX_PER_STEP + "px";
+    btn.dataset.index = i;
+    btn.setAttribute('aria-label', yearToLabel(year));
+
     let kind = 'minor';
     if (i % MAJOR_EVERY === 0) kind = 'major';
     else if (i % MID_EVERY === 0) kind = 'mid';
+
+    const tick = document.createElement('div');
     tick.className = 'tick ' + kind;
-    tick.style.left = x + "px";
-    frag.appendChild(tick);
+    btn.appendChild(tick);
 
     if (kind === 'major'){
       const label = document.createElement('div');
-      label.className = 'label major';
-      label.style.left = x + "px";
+      label.className = 'label';
       label.textContent = yearToLabel(year);
-      frag.appendChild(label);
+      btn.appendChild(label);
     }
+
+    if (eventsByStep[i]){
+      const dot = document.createElement('div');
+      dot.className = 'info-dot';
+      btn.appendChild(dot);
+    }
+
+    frag.appendChild(btn);
   }
   spineWrap.appendChild(frag);
 
-  // ---- start flag ----
+  // start flag (permanent label at 10,000 BCE)
   const startFlag = document.createElement('div');
   startFlag.className = 'start-flag';
   startFlag.style.left = "0px";
-  startFlag.innerHTML = '<div class="txt">10,000 BCE</div>';
+  startFlag.textContent = "10,000 BCE";
   spineWrap.appendChild(startFlag);
 
-  // ---- event markers ----
-  events.forEach(ev => {
-    const div = document.createElement('div');
-    div.className = 'event';
-    div.style.left = yearToX(ev.year) + "px";
-    div.innerHTML = '<div class="dot"></div><div class="txt">' + yearToLabel(ev.year) + ' — ' + ev.text + '</div>';
-    spineWrap.appendChild(div);
+  // "today" as its own increment, appended at the true current-year position
+  const todayX = ((CURRENT_YEAR - START_YEAR) / STEP) * PX_PER_STEP;
+  const todayBtn = document.createElement('button');
+  todayBtn.className = 'increment';
+  todayBtn.style.left = todayX + "px";
+  todayBtn.style.width = PX_PER_STEP + "px";
+  todayBtn.dataset.index = "today";
+  todayBtn.setAttribute('aria-label', 'Today');
+  todayBtn.innerHTML = '<div class="tick major"></div><div class="info-dot"></div>';
+  const todayLabel = document.createElement('div');
+  todayLabel.className = 'now-flag-label';
+  todayLabel.style.left = todayX + "px";
+  todayLabel.style.transform = "translateX(-50%)";
+  todayLabel.textContent = "Today — " + CURRENT_YEAR;
+  spineWrap.appendChild(todayBtn);
+  spineWrap.appendChild(todayLabel);
+
+  // ---- click-to-toggle popups ----
+  let openPopup = null;
+  let openKey = null;
+
+  function closePopup(){
+    if (openPopup) openPopup.remove();
+    openPopup = null;
+    if (openKey !== null){
+      const prev = spineWrap.querySelector('.increment.active');
+      if (prev) prev.classList.remove('active');
+    }
+    openKey = null;
+  }
+
+  function openPopupFor(btn, key, x, year, infoList, isToday){
+    const popup = document.createElement('div');
+    popup.className = 'popup';
+    popup.style.left = x + "px";
+
+    const yearSpan = document.createElement('span');
+    yearSpan.className = 'popup-year';
+    yearSpan.textContent = isToday ? ("Today — " + CURRENT_YEAR) : yearToLabel(year);
+    popup.appendChild(yearSpan);
+
+    if (infoList && infoList.length){
+      infoList.forEach(ev => {
+        const p = document.createElement('div');
+        p.textContent = ev.text;
+        popup.appendChild(p);
+      });
+    } else {
+      const p = document.createElement('div');
+      p.className = 'popup-empty';
+      p.textContent = 'No information for this period.';
+      popup.appendChild(p);
+    }
+
+    spineWrap.appendChild(popup);
+    openPopup = popup;
+    openKey = key;
+    btn.classList.add('active');
+  }
+
+  spineWrap.addEventListener('click', (e) => {
+    const btn = e.target.closest('.increment');
+    if (!btn) return;
+
+    const key = btn.dataset.index;
+
+    if (openKey === key){
+      closePopup();
+      return;
+    }
+
+    closePopup();
+
+    const x = parseFloat(btn.style.left);
+    if (key === "today"){
+      openPopupFor(btn, key, x, CURRENT_YEAR, [{ text: "You are here." }], true);
+    } else {
+      const idx = parseInt(key, 10);
+      const year = stepToYear(idx);
+      openPopupFor(btn, key, x, year, eventsByStep[idx], false);
+    }
   });
 
-  // ---- now flag ----
-  const nowFlag = document.createElement('div');
-  nowFlag.className = 'now-flag';
-  nowFlag.style.left = yearToX(CURRENT_YEAR) + "px";
-  nowFlag.innerHTML = '<div class="dot"></div><div class="txt">Today — ' + CURRENT_YEAR + '</div>';
-  spineWrap.appendChild(nowFlag);
+  // close popup when clicking elsewhere (but not on an increment or the popup itself)
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.increment') && !e.target.closest('.popup')){
+      closePopup();
+    }
+  });
 
   // allow vertical wheel scroll to move the horizontal track
   const scroller = document.getElementById('scroller');
