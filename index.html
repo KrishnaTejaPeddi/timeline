@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12,000 Years — A Scrolling Timeline</title>
+<style>
+  :root{
+    --bg: #f2ede3;
+    --ink: #262019;
+    --line: #262019;
+    --rule: #b9ad98;
+    --accent: #a8442f;
+    --band-a: #e7ddc8;
+    --band-b: #ddd0b3;
+  }
+  *{ box-sizing: border-box; }
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    height:100%;
+  }
+  header{
+    padding: 28px 32px 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+  h1{
+    margin:0 0 4px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  p.sub{
+    margin:0;
+    font-size: 0.95rem;
+    color: #5b5344;
+    font-family: Georgia, serif;
+    max-width: 60ch;
+  }
+  .hint{
+    font-size: 0.85rem;
+    color: #5b5344;
+    margin-top: 8px;
+  }
+  .hint kbd{
+    font-family: Georgia, serif;
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+  }
+
+  #scroller{
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    height: calc(100vh - 108px);
+    position: relative;
+  }
+
+  #track{
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .eras{
+    position: relative;
+    height: 46px;
+    flex: 0 0 auto;
+    display: flex;
+  }
+  .era{
+    height: 100%;
+    display:flex;
+    align-items:center;
+    padding-left: 10px;
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+    color: #4a4030;
+    white-space: nowrap;
+    border-right: 1px solid var(--rule);
+    position: sticky;
+    left: 0;
+  }
+  .era span{
+    position: sticky;
+    left: 10px;
+  }
+
+  .spine-wrap{
+    position: relative;
+    flex: 1 1 auto;
+  }
+
+  .spine{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--line);
+  }
+
+  .tick{
+    position: absolute;
+    top: 50%;
+    width: 1px;
+    background: var(--rule);
+  }
+  .tick.minor{ height: 14px; margin-top: -7px; }
+  .tick.mid{ height: 22px; margin-top: -11px; background: #8f846d; }
+  .tick.major{ height: 34px; margin-top: -17px; background: var(--ink); width: 1.5px; }
+
+  .label{
+    position: absolute;
+    top: 50%;
+    margin-top: 22px;
+    transform: translateX(-50%);
+    font-size: 0.72rem;
+    color: #5b5344;
+    white-space: nowrap;
+  }
+  .label.major{
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 0.8rem;
+    margin-top: 24px;
+  }
+
+  .event{
+    position: absolute;
+    bottom: 50%;
+    margin-bottom: 8px;
+    transform: translateX(-50%);
+    text-align: center;
+    max-width: 140px;
+  }
+  .event .dot{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin: 0 auto 6px;
+  }
+  .event .txt{
+    font-size: 0.72rem;
+    line-height: 1.25;
+    color: #3d3527;
+  }
+
+  .now-flag{
+    position: absolute;
+    bottom: 50%;
+    margin-bottom: 8px;
+    right: 0;
+    transform: translateX(50%);
+    text-align: center;
+  }
+  .now-flag .dot{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--ink);
+    margin: 0 auto 6px;
+  }
+  .now-flag .txt{
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .start-flag{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    margin-top: -70px;
+    text-align: center;
+    transform: translateX(0);
+  }
+  .start-flag .txt{
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Twelve Thousand Years</h1>
+  <p class="sub">A single line from 10,000 BCE to today. Each small mark is 50 years.</p>
+  <p class="hint">Scroll right to move forward in time — <kbd>shift</kbd> + scroll, a trackpad swipe, or drag the scrollbar all work.</p>
+</header>
+
+<div id="scroller">
+  <div id="track">
+    <div class="eras" id="eras"></div>
+    <div class="spine-wrap" id="spineWrap">
+      <div class="spine"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---- configuration ----
+  const START_YEAR = -10000;   // 10000 BCE
+  const CURRENT_YEAR = 2026;
+  const STEP = 50;             // years per minor tick
+  const PX_PER_STEP = 34;      // pixel spacing between minor ticks
+  const MAJOR_EVERY = 10;      // every 10th tick (500 yrs) is a major tick+label
+  const MID_EVERY = 2;         // every 2nd tick (100 yrs) is a mid tick
+
+  const eras = [
+    { start: -10000, end: -3300, name: "Neolithic — farming, pottery, first villages" },
+    { start: -3300,  end: -1200, name: "Bronze Age — writing, cities, first empires" },
+    { start: -1200,  end: -550,  name: "Iron Age — iron tools, early kingdoms" },
+    { start: -550,   end: 500,   name: "Classical Antiquity — Greece, Rome, Persia, Han China" },
+    { start: 500,    end: 1500,  name: "Middle Ages" },
+    { start: 1500,   end: 1800,  name: "Early Modern — exploration, printing, empires" },
+    { start: 1800,   end: 1945,  name: "Industrial & Imperial Age" },
+    { start: 1945,   end: 2026,  name: "Contemporary Era" },
+  ];
+
+  const events = [
+    { year: -9000,  text: "First farming settlements (Levant)" },
+    { year: -3500,  text: "Wheel & early writing (Sumer)" },
+    { year: -2560,  text: "Great Pyramid of Giza" },
+    { year: -1200,  text: "Bronze Age collapse" },
+    { year: -776,   text: "First recorded Olympic Games" },
+    { year: -221,   text: "Qin unifies China" },
+    { year: 0,      text: "Start of the Common Era" },
+    { year: 610,    text: "Rise of Islam" },
+    { year: 1088,   text: "First university (Bologna)" },
+    { year: 1347,   text: "Black Death reaches Europe" },
+    { year: 1492,   text: "Columbus reaches the Americas" },
+    { year: 1687,   text: "Newton's Principia" },
+    { year: 1776,   text: "US Declaration of Independence" },
+    { year: 1859,   text: "Darwin's Origin of Species" },
+    { year: 1945,   text: "End of World War II" },
+    { year: 1969,   text: "Moon landing" },
+    { year: 1991,   text: "World Wide Web goes public" },
+    { year: 2020,   text: "COVID-19 pandemic" },
+  ];
+
+  const totalSteps = Math.round((CURRENT_YEAR - START_YEAR) / STEP);
+  const totalWidth = totalSteps * PX_PER_STEP + 160;
+
+  function yearToLabel(y){
+    if (y === 0) return "0";
+    return Math.abs(y) + (y < 0 ? " BCE" : " CE");
+  }
+  function yearToX(y){
+    return (y - START_YEAR) / STEP * PX_PER_STEP;
+  }
+
+  // size the scrollable track
+  const track = document.getElementById('track');
+  const spineWrap = document.getElementById('spineWrap');
+  const erasRow = document.getElementById('eras');
+  track.style.width = totalWidth + "px";
+
+  // ---- era bands ----
+  eras.forEach((e, i) => {
+    const div = document.createElement('div');
+    div.className = 'era';
+    const x0 = yearToX(e.start);
+    const x1 = yearToX(Math.min(e.end, CURRENT_YEAR));
+    div.style.width = (x1 - x0) + "px";
+    div.style.background = i % 2 === 0 ? 'var(--band-a)' : 'var(--band-b)';
+    const span = document.createElement('span');
+    span.textContent = e.name;
+    div.appendChild(span);
+    erasRow.appendChild(div);
+  });
+
+  // ---- ticks + labels ----
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i <= totalSteps; i++){
+    const year = START_YEAR + i * STEP;
+    const x = i * PX_PER_STEP;
+
+    const tick = document.createElement('div');
+    let kind = 'minor';
+    if (i % MAJOR_EVERY === 0) kind = 'major';
+    else if (i % MID_EVERY === 0) kind = 'mid';
+    tick.className = 'tick ' + kind;
+    tick.style.left = x + "px";
+    frag.appendChild(tick);
+
+    if (kind === 'major'){
+      const label = document.createElement('div');
+      label.className = 'label major';
+      label.style.left = x + "px";
+      label.textContent = yearToLabel(year);
+      frag.appendChild(label);
+    }
+  }
+  spineWrap.appendChild(frag);
+
+  // ---- start flag ----
+  const startFlag = document.createElement('div');
+  startFlag.className = 'start-flag';
+  startFlag.style.left = "0px";
+  startFlag.innerHTML = '<div class="txt">10,000 BCE</div>';
+  spineWrap.appendChild(startFlag);
+
+  // ---- event markers ----
+  events.forEach(ev => {
+    const div = document.createElement('div');
+    div.className = 'event';
+    div.style.left = yearToX(ev.year) + "px";
+    div.innerHTML = '<div class="dot"></div><div class="txt">' + yearToLabel(ev.year) + ' — ' + ev.text + '</div>';
+    spineWrap.appendChild(div);
+  });
+
+  // ---- now flag ----
+  const nowFlag = document.createElement('div');
+  nowFlag.className = 'now-flag';
+  nowFlag.style.left = yearToX(CURRENT_YEAR) + "px";
+  nowFlag.innerHTML = '<div class="dot"></div><div class="txt">Today — ' + CURRENT_YEAR + '</div>';
+  spineWrap.appendChild(nowFlag);
+
+  // allow vertical wheel scroll to move the horizontal track
+  const scroller = document.getElementById('scroller');
+  scroller.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      scroller.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }
+  }, { passive: false });
+</script>
+
+</body>
+</html>
