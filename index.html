@@ -14,6 +14,12 @@
     --band-a: #e7ddc8;
     --band-b: #ddd0b3;
     --popup-bg: #fffdf7;
+
+    --cat-war: #a8442f;
+    --cat-science: #2c6e8e;
+    --cat-politics: #6a4c93;
+    --cat-disaster: #b5651d;
+    --cat-culture: #3f7d43;
   }
   *{ box-sizing: border-box; }
   html, body{
@@ -25,25 +31,25 @@
     height:100%;
   }
   header{
-    padding: 24px 32px 12px;
+    padding: 20px 32px 12px;
     border-bottom: 1px solid var(--rule);
   }
   h1{
     margin:0 0 4px;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 600;
     letter-spacing: 0.01em;
   }
   p.sub{
     margin:0;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: #5b5344;
     max-width: 60ch;
   }
   .hint{
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #5b5344;
-    margin-top: 8px;
+    margin: 6px 0 12px;
   }
   .hint kbd{
     font-family: Georgia, serif;
@@ -51,15 +57,86 @@
     border-bottom-width: 2px;
     padding: 1px 6px;
     border-radius: 3px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
   }
+
+  /* ---- controls bar ---- */
+  .controls{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 22px;
+    font-family: Georgia, serif;
+    font-size: 0.82rem;
+  }
+  .controls .group{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .controls input[type="text"]{
+    font-family: Georgia, serif;
+    font-size: 0.82rem;
+    padding: 5px 8px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: #fffdf7;
+    color: var(--ink);
+    width: 180px;
+  }
+  .controls button{
+    font-family: Georgia, serif;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border: 1px solid var(--ink);
+    border-radius: 4px;
+    background: #fffdf7;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .controls button:hover{ background: var(--band-a); }
+  .controls button.primary{
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .controls button.primary:hover{ opacity: 0.85; }
+  #searchMsg{
+    font-size: 0.76rem;
+    color: var(--accent);
+    font-style: italic;
+  }
+  .controls input[type="range"]{ width: 110px; }
+  .legend{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .legend label{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .swatch{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .swatch.war{ background: var(--cat-war); }
+  .swatch.science{ background: var(--cat-science); }
+  .swatch.politics{ background: var(--cat-politics); }
+  .swatch.disaster{ background: var(--cat-disaster); }
+  .swatch.culture{ background: var(--cat-culture); }
 
   #scroller{
     overflow-x: scroll;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     width: 100%;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 168px);
     position: relative;
   }
 
@@ -133,6 +210,12 @@
     width: 2px;
   }
 
+  /* focus mode: hide increments with no currently-visible info, keep major ticks for orientation */
+  body.focus-mode .increment:not(.has-info):not(.is-major){
+    visibility: hidden;
+    pointer-events: none;
+  }
+
   .tick{
     position: absolute;
     top: 50%;
@@ -148,8 +231,8 @@
     position: absolute;
     top: 50%;
     margin-top: 20px;
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: var(--accent);
     pointer-events: none;
@@ -187,8 +270,8 @@
     border: 1.5px solid var(--ink);
     border-radius: 4px;
     padding: 10px 12px;
-    min-width: 160px;
-    max-width: 240px;
+    min-width: 180px;
+    max-width: 260px;
     box-shadow: 3px 3px 0 rgba(38,32,25,0.15);
     z-index: 20;
     font-size: 0.82rem;
@@ -202,6 +285,16 @@
   .popup .popup-empty{
     color: #7a7160;
     font-style: italic;
+  }
+  .popup .popup-event{
+    display: flex;
+    gap: 6px;
+    margin-bottom: 4px;
+    align-items: flex-start;
+  }
+  .popup .popup-event .swatch{
+    margin-top: 5px;
+    flex: 0 0 auto;
   }
   .popup::after{
     content: "";
@@ -228,6 +321,27 @@
     border-top: 7px solid var(--popup-bg);
     z-index: 1;
   }
+
+  /* ---- minimap ---- */
+  #minimap{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 16px;
+    background: var(--band-b);
+    border-top: 1px solid var(--rule);
+    cursor: pointer;
+    z-index: 30;
+  }
+  #minimapFill{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: var(--accent);
+    opacity: 0.55;
+    pointer-events: none;
+  }
 </style>
 </head>
 <body>
@@ -235,7 +349,32 @@
 <header>
   <h1>Twelve Thousand Years</h1>
   <p class="sub">A single line from 10,000 BCE to today. Every mark is 50 years — click one to see what happened.</p>
-  <p class="hint">Scroll right to move forward in time (<kbd>shift</kbd> + scroll, trackpad swipe, or drag the scrollbar) — click any mark for details, click it again to close.</p>
+  <p class="hint">Scroll right to move forward (<kbd>shift</kbd>+scroll, trackpad, or drag) · click a mark for details, click again to close · <kbd>←</kbd>/<kbd>→</kbd> hop between dated points.</p>
+
+  <div class="controls">
+    <div class="group">
+      <input type="text" id="searchInput" placeholder="Jump to a year or keyword…">
+      <button class="primary" id="searchBtn">Go</button>
+      <span id="searchMsg"></span>
+    </div>
+    <div class="group">
+      <label for="zoomSlider">Zoom</label>
+      <input type="range" id="zoomSlider" min="30" max="180" step="5" value="90">
+    </div>
+    <div class="group">
+      <button id="playBtn">▶ Play</button>
+    </div>
+    <div class="group">
+      <label><input type="checkbox" id="focusToggle"> Only dated points</label>
+    </div>
+    <div class="legend" id="legend">
+      <label><input type="checkbox" class="cat-toggle" data-cat="war" checked> <span class="swatch war"></span>War</label>
+      <label><input type="checkbox" class="cat-toggle" data-cat="science" checked> <span class="swatch science"></span>Science</label>
+      <label><input type="checkbox" class="cat-toggle" data-cat="politics" checked> <span class="swatch politics"></span>Politics</label>
+      <label><input type="checkbox" class="cat-toggle" data-cat="disaster" checked> <span class="swatch disaster"></span>Disaster</label>
+      <label><input type="checkbox" class="cat-toggle" data-cat="culture" checked> <span class="swatch culture"></span>Culture</label>
+    </div>
+  </div>
 </header>
 
 <div id="scroller">
@@ -247,12 +386,14 @@
   </div>
 </div>
 
+<div id="minimap"><div id="minimapFill"></div></div>
+
 <script>
   // ---- configuration ----
   const START_YEAR = -10000;   // 10000 BCE
   const CURRENT_YEAR = 2026;
   const STEP = 50;             // years per increment
-  const PX_PER_STEP = 90;      // spread out: pixels between increments
+  let PX_PER_STEP = 90;        // pixels between increments (adjustable via zoom)
   const MAJOR_EVERY = 10;      // every 10th increment (500 yrs) gets a permanent label
   const MID_EVERY = 2;         // every 2nd increment (100 yrs) gets a mid-size tick
 
@@ -443,10 +584,62 @@
     { year: 1200,  text: "Magnetic compass becomes important for navigation." },
     { year: 1300,  text: "Mechanical clocks begin emerging in Europe." },
     { year: 1450,  text: "Printing fundamentally changes information transmission." },
+
+    // --- new batch: the gaps flagged as missing ---
+    { year: 100,   text: "Kingdom of Aksum rises as a major trade power in East Africa." },
+    { year: 320,   text: "Gupta Empire golden age in South Asia — mathematics, astronomy and the arts flourish." },
+    { year: 476,   text: "Fall of the Western Roman Empire." },
+    { year: 529,   text: "Justinian Code compiled — a comprehensive codification of Roman law." },
+    { year: 541,   text: "Justinian's Plague — one of the earliest well-documented pandemics." },
+    { year: 632,   text: "Death of Muhammad and the rapid early Islamic conquests that follow." },
+    { year: 700,   text: "Tang dynasty golden age in China." },
+    { year: 793,   text: "Viking Age begins with the raid on Lindisfarne." },
+    { year: 800,   text: "Charlemagne crowned Holy Roman Emperor." },
+    { year: 1000,  text: "Song dynasty innovations in China — printing, gunpowder weapons, paper money." },
+    { year: 1050,  text: "Cahokia flourishes as a major urban center in North America." },
+    { year: 1066,  text: "Battle of Hastings — Norman conquest of England." },
+    { year: 1096,  text: "The Crusades begin." },
+    { year: 1100,  text: "Great Zimbabwe rises as a major trading center in southern Africa." },
+    { year: 1206,  text: "Genghis Khan founds the Mongol Empire." },
+    { year: 1215,  text: "Magna Carta signed in England." },
+    { year: 1250,  text: "Maya civilization's later city-states flourish." },
+    { year: 1324,  text: "Mansa Musa's pilgrimage showcases the wealth of the Mali Empire." },
+    { year: 1325,  text: "Tenochtitlan founded, capital of the Aztec Empire." },
+    { year: 1368,  text: "Ming dynasty founded in China." },
+    { year: 1405,  text: "Zheng He's treasure-fleet voyages begin." },
+    { year: 1438,  text: "Inca Empire founded in the Andes." },
+    { year: 1440,  text: "Gutenberg develops the movable-type printing press in Europe." },
+    { year: 1453,  text: "Fall of Constantinople to the Ottomans." },
+    { year: 1464,  text: "Songhai Empire rises to dominance in West Africa." },
+    { year: 1919,  text: "Treaty of Versailles signed, ending World War I." },
+    { year: 1920,  text: "Widespread women's suffrage movements win the vote in many countries." },
+    { year: 1947,  text: "Indian independence and partition." },
+    { year: 1949,  text: "Chinese Communist Revolution establishes the People's Republic of China." },
+    { year: 1962,  text: "Cuban Missile Crisis brings the Cold War to the brink." },
+    { year: 1963,  text: "Civil rights movement's March on Washington." },
+    { year: 1989,  text: "Fall of the Berlin Wall." },
   ];
 
+  // ---- naive keyword-based categorizer (for coloring/filtering only) ----
+  function categorize(text){
+    const t = text.toLowerCase();
+    if (/scientific revolution|computing revolution|industrial age/.test(t)) return 'science';
+    if (/pandemic|plague|flu\b|famine|earthquake|\bcollapse\b|disaster/.test(t)) return 'disaster';
+    if (/\bwar\b|battle|conquest|invasion|invaders|revolt|revolution|rebellion|siege|crusade|fall of|civil war|military|raid\b/.test(t)) return 'war';
+    if (/discover|invent|publish|theory|telescope|physics|mathematic|algorithm|microscope|\bgene\b|\bdna\b|spaceflight|microprocessor|internet|\bweb\b|transistor|vaccine|penicillin|relativity|electron|radioactiv|periodic table|higgs|gravitational|hubble|crispr|cloned|numeral|\bzero\b|writing emerges|papermaking|printing|compass|clock|steam engine|battery|induction|x-rays|astronomy|movable type/.test(t)) return 'science';
+    if (/empire|kingdom|dynasty|republic|democracy|constitution|declaration|independence|founded|government|president|\bking\b|emperor|treaty|legal code|code of|union|\bnation\b|parliament|suffrage|\brights\b|crowned|partition/.test(t)) return 'politics';
+    return 'culture';
+  }
+  const CAT_COLOR = {
+    war: 'var(--cat-war)',
+    science: 'var(--cat-science)',
+    politics: 'var(--cat-politics)',
+    disaster: 'var(--cat-disaster)',
+    culture: 'var(--cat-culture)',
+  };
+  events.forEach(ev => { ev.category = categorize(ev.text); });
+
   const totalSteps = Math.round((CURRENT_YEAR - START_YEAR) / STEP);
-  const totalWidth = totalSteps * PX_PER_STEP + 200;
 
   function yearToLabel(y){
     if (y === 0) return "0";
@@ -458,51 +651,64 @@
   function stepToX(i){
     return i * PX_PER_STEP;
   }
+  function yearToStepIdx(y){
+    return Math.round((y - START_YEAR) / STEP);
+  }
 
   // group events onto their nearest increment index
   const eventsByStep = {};
   events.forEach(ev => {
-    const idx = Math.round((ev.year - START_YEAR) / STEP);
+    const idx = yearToStepIdx(ev.year);
     if (!eventsByStep[idx]) eventsByStep[idx] = [];
     eventsByStep[idx].push(ev);
   });
+  const sortedEventStepIndices = Object.keys(eventsByStep).map(Number).sort((a,b) => a-b);
+
+  // ---- active category filters ----
+  const activeCategories = new Set(['war','science','politics','disaster','culture']);
+  function getVisibleEvents(idx){
+    const list = eventsByStep[idx];
+    if (!list) return [];
+    return list.filter(ev => activeCategories.has(ev.category));
+  }
 
   // ---- layout ----
   const track = document.getElementById('track');
   const spineWrap = document.getElementById('spineWrap');
   const erasRow = document.getElementById('eras');
-  track.style.width = totalWidth + "px";
 
   // era bands
+  const eraDivs = [];
   eras.forEach((e, i) => {
     const div = document.createElement('div');
     div.className = 'era';
-    const x0 = stepToX(Math.round((e.start - START_YEAR) / STEP));
-    const x1 = stepToX(Math.round((Math.min(e.end, CURRENT_YEAR) - START_YEAR) / STEP));
-    div.style.width = (x1 - x0) + "px";
+    const startIdx = yearToStepIdx(e.start);
+    const endIdx = yearToStepIdx(Math.min(e.end, CURRENT_YEAR));
     div.style.background = i % 2 === 0 ? 'var(--band-a)' : 'var(--band-b)';
     const span = document.createElement('span');
     span.textContent = e.name;
     div.appendChild(span);
     erasRow.appendChild(div);
+    eraDivs.push({ div, startIdx, endIdx });
   });
 
-  const frag = document.createDocumentFragment();
+  const incrementEls = [];
+  const dotsByIndex = {};
 
+  const frag = document.createDocumentFragment();
   for (let i = 0; i <= totalSteps; i++){
     const year = stepToYear(i);
-    const x = stepToX(i);
+    if (year > CURRENT_YEAR) break; // avoid a regular tick overlapping the "today" marker
 
     const btn = document.createElement('button');
     btn.className = 'increment';
-    btn.style.left = x + "px";
-    btn.style.width = PX_PER_STEP + "px";
     btn.dataset.index = i;
     btn.setAttribute('aria-label', yearToLabel(year));
 
     let kind = 'minor';
     if (i % MAJOR_EVERY === 0) kind = 'major';
     else if (i % MID_EVERY === 0) kind = 'mid';
+    if (kind === 'major') btn.classList.add('is-major');
 
     const tick = document.createElement('div');
     tick.className = 'tick ' + kind;
@@ -519,35 +725,87 @@
       const dot = document.createElement('div');
       dot.className = 'info-dot';
       btn.appendChild(dot);
+      dotsByIndex[i] = dot;
+      btn.classList.add('has-info');
     }
 
     frag.appendChild(btn);
+    incrementEls.push(btn);
   }
   spineWrap.appendChild(frag);
 
   // start flag (permanent label at 10,000 BCE)
   const startFlag = document.createElement('div');
   startFlag.className = 'start-flag';
-  startFlag.style.left = "0px";
   startFlag.textContent = "10,000 BCE";
   spineWrap.appendChild(startFlag);
 
   // "today" as its own increment, appended at the true current-year position
-  const todayX = ((CURRENT_YEAR - START_YEAR) / STEP) * PX_PER_STEP;
+  const todayIdx = yearToStepIdx(CURRENT_YEAR);
   const todayBtn = document.createElement('button');
-  todayBtn.className = 'increment';
-  todayBtn.style.left = todayX + "px";
-  todayBtn.style.width = PX_PER_STEP + "px";
+  todayBtn.className = 'increment is-major has-info';
   todayBtn.dataset.index = "today";
   todayBtn.setAttribute('aria-label', 'Today');
   todayBtn.innerHTML = '<div class="tick major"></div><div class="info-dot"></div>';
   const todayLabel = document.createElement('div');
   todayLabel.className = 'now-flag-label';
-  todayLabel.style.left = todayX + "px";
-  todayLabel.style.transform = "translateX(-50%)";
   todayLabel.textContent = "Today — " + CURRENT_YEAR;
   spineWrap.appendChild(todayBtn);
   spineWrap.appendChild(todayLabel);
+  dotsByIndex['today'] = todayBtn.querySelector('.info-dot');
+
+  // ---- relayout (used on zoom change) ----
+  function relayout(){
+    const totalWidth = totalSteps * PX_PER_STEP + 200;
+    track.style.width = totalWidth + "px";
+
+    incrementEls.forEach((btn, i) => {
+      btn.style.left = (i * PX_PER_STEP) + "px";
+      btn.style.width = PX_PER_STEP + "px";
+    });
+    eraDivs.forEach(o => {
+      o.div.style.width = ((o.endIdx - o.startIdx) * PX_PER_STEP) + "px";
+    });
+
+    const todayX = todayIdx * PX_PER_STEP;
+    todayBtn.style.left = todayX + "px";
+    todayBtn.style.width = PX_PER_STEP + "px";
+    todayLabel.style.left = todayX + "px";
+    todayLabel.style.transform = "translateX(-50%)";
+    startFlag.style.left = "0px";
+
+    closePopup();
+    updateMinimap();
+  }
+  relayout();
+
+  // ---- category coloring / filtering ----
+  function refreshCategoryVisibility(){
+    sortedEventStepIndices.forEach(idx => {
+      const visible = getVisibleEvents(idx);
+      const dot = dotsByIndex[idx];
+      const btn = incrementEls[idx];
+      if (!dot || !btn) return;
+      if (visible.length){
+        dot.style.display = '';
+        dot.style.background = CAT_COLOR[visible[0].category];
+        btn.classList.add('has-info');
+      } else {
+        dot.style.display = 'none';
+        btn.classList.remove('has-info');
+      }
+    });
+    closePopup();
+  }
+  refreshCategoryVisibility();
+
+  document.querySelectorAll('.cat-toggle').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const cat = cb.dataset.cat;
+      if (cb.checked) activeCategories.add(cat); else activeCategories.delete(cat);
+      refreshCategoryVisibility();
+    });
+  });
 
   // ---- click-to-toggle popups ----
   let openPopup = null;
@@ -575,9 +833,18 @@
 
     if (infoList && infoList.length){
       infoList.forEach(ev => {
-        const p = document.createElement('div');
-        p.textContent = ev.text;
-        popup.appendChild(p);
+        const row = document.createElement('div');
+        row.className = 'popup-event';
+        if (!isToday){
+          const sw = document.createElement('span');
+          sw.className = 'swatch';
+          sw.style.background = CAT_COLOR[ev.category] || 'var(--accent)';
+          row.appendChild(sw);
+        }
+        const txt = document.createElement('span');
+        txt.textContent = ev.text;
+        row.appendChild(txt);
+        popup.appendChild(row);
       });
     } else {
       const p = document.createElement('div');
@@ -590,46 +857,209 @@
     openPopup = popup;
     openKey = key;
     btn.classList.add('active');
+
+    if (isToday){
+      history.replaceState(null, '', '#today');
+    } else {
+      history.replaceState(null, '', '#year=' + year);
+    }
+  }
+
+  function openForKey(key){
+    const btn = key === 'today' ? todayBtn : incrementEls[parseInt(key, 10)];
+    if (!btn) return;
+    if (openKey === key){ closePopup(); return; }
+    closePopup();
+    const x = parseFloat(btn.style.left);
+    if (key === 'today'){
+      openPopupFor(btn, key, x, CURRENT_YEAR, [{ text: "You are here." }], true);
+    } else {
+      const idx = parseInt(key, 10);
+      const year = stepToYear(idx);
+      openPopupFor(btn, key, x, year, getVisibleEvents(idx), false);
+    }
   }
 
   spineWrap.addEventListener('click', (e) => {
     const btn = e.target.closest('.increment');
     if (!btn) return;
-
-    const key = btn.dataset.index;
-
-    if (openKey === key){
-      closePopup();
-      return;
-    }
-
-    closePopup();
-
-    const x = parseFloat(btn.style.left);
-    if (key === "today"){
-      openPopupFor(btn, key, x, CURRENT_YEAR, [{ text: "You are here." }], true);
-    } else {
-      const idx = parseInt(key, 10);
-      const year = stepToYear(idx);
-      openPopupFor(btn, key, x, year, eventsByStep[idx], false);
-    }
+    openForKey(btn.dataset.index);
   });
 
-  // close popup when clicking elsewhere (but not on an increment or the popup itself)
+  // close popup when clicking elsewhere (but not on an increment, popup, or controls)
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.increment') && !e.target.closest('.popup')){
       closePopup();
     }
   });
 
-  // allow vertical wheel scroll to move the horizontal track
+  // ---- scrolling ----
   const scroller = document.getElementById('scroller');
+
   scroller.addEventListener('wheel', (e) => {
     if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
       scroller.scrollLeft += e.deltaY;
       e.preventDefault();
     }
+    stopPlaying();
   }, { passive: false });
+  scroller.addEventListener('pointerdown', stopPlaying);
+
+  function scrollToStepIdx(idx, openPopupToo){
+    const x = idx * PX_PER_STEP;
+    scroller.scrollLeft = Math.max(0, x - scroller.clientWidth / 2);
+    if (openPopupToo) openForOrphanClose(idx);
+  }
+  function openForOrphanClose(idx){
+    closePopup();
+    openForKey(idx === todayIdx ? 'today' : String(idx));
+  }
+
+  // ---- search: jump to year or keyword ----
+  const searchInput = document.getElementById('searchInput');
+  const searchBtn = document.getElementById('searchBtn');
+  const searchMsg = document.getElementById('searchMsg');
+
+  function parseYearQuery(q){
+    const s = q.trim().toLowerCase();
+    let m = s.match(/^(-?\d+)\s*(bce|bc)?$/);
+    if (m){
+      let y = parseInt(m[1], 10);
+      if (m[2]) y = -Math.abs(y);
+      return y;
+    }
+    m = s.match(/^(\d+)\s*(ce|ad)$/);
+    if (m) return parseInt(m[1], 10);
+    return null;
+  }
+
+  function runSearch(){
+    const q = searchInput.value;
+    if (!q.trim()){ searchMsg.textContent = ''; return; }
+
+    const asYear = parseYearQuery(q);
+    if (asYear !== null){
+      const clamped = Math.max(START_YEAR, Math.min(CURRENT_YEAR, asYear));
+      const idx = yearToStepIdx(clamped);
+      searchMsg.textContent = '';
+      scrollToStepIdx(idx, true);
+      return;
+    }
+
+    const needle = q.trim().toLowerCase();
+    const match = events.find(ev => activeCategories.has(ev.category) && ev.text.toLowerCase().includes(needle));
+    if (match){
+      searchMsg.textContent = '';
+      const idx = yearToStepIdx(match.year);
+      scrollToStepIdx(idx, true);
+    } else {
+      searchMsg.textContent = 'No matches — try a year (e.g. "1969" or "1200 BCE") or a keyword.';
+    }
+  }
+  searchBtn.addEventListener('click', runSearch);
+  searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(); });
+
+  // ---- zoom ----
+  const zoomSlider = document.getElementById('zoomSlider');
+  zoomSlider.addEventListener('input', () => {
+    PX_PER_STEP = parseInt(zoomSlider.value, 10);
+    relayout();
+  });
+
+  // ---- focus mode (only dated points) ----
+  const focusToggle = document.getElementById('focusToggle');
+  focusToggle.addEventListener('change', () => {
+    document.body.classList.toggle('focus-mode', focusToggle.checked);
+  });
+
+  // ---- keyboard navigation between dated points ----
+  document.addEventListener('keydown', (e) => {
+    if (e.target === searchInput) return;
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+
+    const allIdx = sortedEventStepIndices.concat([todayIdx]).sort((a,b) => a-b);
+    const approx = Math.round(scroller.scrollLeft / PX_PER_STEP);
+
+    let target;
+    if (e.key === 'ArrowRight'){
+      target = allIdx.find(idx => idx > approx + 2);
+      if (target === undefined) target = allIdx[allIdx.length - 1];
+    } else {
+      const rev = allIdx.slice().reverse();
+      target = rev.find(idx => idx < approx - 2);
+      if (target === undefined) target = allIdx[0];
+    }
+    e.preventDefault();
+    scrollToStepIdx(target, true);
+  });
+
+  // ---- play / auto-scroll ----
+  const playBtn = document.getElementById('playBtn');
+  let playing = false;
+  function stopPlaying(){
+    if (!playing) return;
+    playing = false;
+    playBtn.textContent = '▶ Play';
+  }
+  function playStep(){
+    if (!playing) return;
+    scroller.scrollLeft += 2;
+    if (scroller.scrollLeft >= scroller.scrollWidth - scroller.clientWidth - 1){
+      stopPlaying();
+      return;
+    }
+    requestAnimationFrame(playStep);
+  }
+  playBtn.addEventListener('click', () => {
+    playing = !playing;
+    playBtn.textContent = playing ? '⏸ Pause' : '▶ Play';
+    if (playing) requestAnimationFrame(playStep);
+  });
+
+  // ---- minimap ----
+  const minimap = document.getElementById('minimap');
+  const minimapFill = document.getElementById('minimapFill');
+  let minimapRAF = false;
+  function updateMinimap(){
+    const maxScroll = Math.max(1, scroller.scrollWidth - scroller.clientWidth);
+    const leftPct = (scroller.scrollLeft / (maxScroll + scroller.clientWidth)) * 100;
+    const widthPct = (scroller.clientWidth / (maxScroll + scroller.clientWidth)) * 100;
+    minimapFill.style.left = leftPct + "%";
+    minimapFill.style.width = widthPct + "%";
+  }
+  scroller.addEventListener('scroll', () => {
+    if (minimapRAF) return;
+    minimapRAF = true;
+    requestAnimationFrame(() => { updateMinimap(); minimapRAF = false; });
+  });
+  window.addEventListener('resize', updateMinimap);
+  minimap.addEventListener('click', (e) => {
+    const rect = minimap.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+    scroller.scrollLeft = ratio * (maxScroll + scroller.clientWidth) - scroller.clientWidth / 2;
+    stopPlaying();
+  });
+
+  // ---- deep link on load ----
+  function applyHash(){
+    const hash = location.hash;
+    if (!hash) return;
+    if (hash === '#today'){
+      scrollToStepIdx(todayIdx, true);
+      return;
+    }
+    const m = hash.match(/^#year=(-?\d+)$/);
+    if (m){
+      const y = parseInt(m[1], 10);
+      const idx = yearToStepIdx(Math.max(START_YEAR, Math.min(CURRENT_YEAR, y)));
+      scrollToStepIdx(idx, true);
+    }
+  }
+  updateMinimap();
+  if (location.hash){
+    setTimeout(applyHash, 0);
+  }
 </script>
 
 </body>
