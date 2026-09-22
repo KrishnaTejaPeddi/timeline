@@ -6,20 +6,20 @@
 <title>12,000 Years — A Scrolling Timeline</title>
 <style>
   :root{
-    --bg: #f2ede3;
-    --ink: #262019;
-    --line: #262019;
-    --rule: #b9ad98;
-    --accent: #a8442f;
-    --band-a: #e7ddc8;
-    --band-b: #ddd0b3;
-    --popup-bg: #fffdf7;
+    --bg: #ffffff;
+    --ink: #000000;
+    --line: #000000;
+    --rule: #999999;
+    --accent: #0000ee;
+    --band-a: #ffffff;
+    --band-b: #eeeeee;
+    --popup-bg: #ffffcc;
 
-    --cat-war: #a8442f;
-    --cat-science: #2c6e8e;
-    --cat-politics: #6a4c93;
-    --cat-disaster: #b5651d;
-    --cat-culture: #3f7d43;
+    --cat-war: #cc0000;
+    --cat-science: #0033cc;
+    --cat-politics: #660099;
+    --cat-disaster: #cc6600;
+    --cat-culture: #006600;
   }
   *{ box-sizing: border-box; }
   html, body{
@@ -27,37 +27,37 @@
     padding:0;
     background: var(--bg);
     color: var(--ink);
-    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
     height:100%;
   }
   header{
-    padding: 20px 32px 12px;
-    border-bottom: 1px solid var(--rule);
+    padding: 12px 16px 10px;
+    border-bottom: 2px solid var(--ink);
+    background: #f0f0f0;
   }
   h1{
     margin:0 0 4px;
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
+    font-size: 1.4rem;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
   }
   p.sub{
     margin:0;
-    font-size: 0.92rem;
-    color: #5b5344;
-    max-width: 60ch;
+    font-size: 0.85rem;
+    color: #333333;
+    max-width: 70ch;
   }
   .hint{
-    font-size: 0.82rem;
-    color: #5b5344;
-    margin: 6px 0 12px;
+    font-size: 0.78rem;
+    color: #333333;
+    margin: 6px 0 10px;
   }
   .hint kbd{
-    font-family: Georgia, serif;
-    border: 1px solid var(--rule);
-    border-bottom-width: 2px;
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-size: 0.78rem;
+    font-family: monospace;
+    border: 1px solid #999999;
+    background: #e8e8e8;
+    padding: 1px 5px;
+    font-size: 0.76rem;
   }
 
   /* ---- controls bar ---- */
@@ -65,64 +65,66 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 14px 22px;
-    font-family: Georgia, serif;
-    font-size: 0.82rem;
+    gap: 10px 18px;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 0.8rem;
+    background: #e8e8e8;
+    border: 1px solid #999999;
+    padding: 8px;
   }
   .controls .group{
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
   }
   .controls input[type="text"]{
-    font-family: Georgia, serif;
-    font-size: 0.82rem;
-    padding: 5px 8px;
-    border: 1px solid var(--rule);
-    border-radius: 4px;
-    background: #fffdf7;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 0.8rem;
+    padding: 3px 5px;
+    border: 1px inset #999999;
+    background: #ffffff;
     color: var(--ink);
-    width: 180px;
+    width: 170px;
   }
   .controls button{
-    font-family: Georgia, serif;
-    font-size: 0.8rem;
-    padding: 5px 10px;
-    border: 1px solid var(--ink);
-    border-radius: 4px;
-    background: #fffdf7;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 0.78rem;
+    padding: 3px 9px;
+    border: 1px outset #999999;
+    background: #d9d9d9;
     color: var(--ink);
     cursor: pointer;
   }
-  .controls button:hover{ background: var(--band-a); }
+  .controls button:hover{ background: #c9c9c9; }
+  .controls button:active{ border-style: inset; }
   .controls button.primary{
-    background: var(--ink);
-    color: var(--bg);
+    background: #d9d9d9;
+    color: var(--ink);
+    font-weight: bold;
   }
-  .controls button.primary:hover{ opacity: 0.85; }
   #searchMsg{
-    font-size: 0.76rem;
-    color: var(--accent);
+    font-size: 0.74rem;
+    color: var(--cat-war);
     font-style: italic;
   }
-  .controls input[type="range"]{ width: 110px; }
+  .controls input[type="range"]{ width: 100px; }
   .legend{
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
   }
   .legend label{
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     cursor: pointer;
     white-space: nowrap;
   }
   .swatch{
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
+    width: 9px;
+    height: 9px;
+    border: 1px solid #000000;
     display: inline-block;
   }
   .swatch.war{ background: var(--cat-war); }
@@ -138,6 +140,7 @@
     width: 100%;
     height: calc(100vh - 168px);
     position: relative;
+    background: #ffffff;
   }
 
   #track{
@@ -149,7 +152,7 @@
 
   .eras{
     position: relative;
-    height: 42px;
+    height: 40px;
     flex: 0 0 auto;
     display: flex;
   }
@@ -157,16 +160,16 @@
     height: 100%;
     display:flex;
     align-items:center;
-    padding-left: 10px;
-    font-size: 0.78rem;
-    letter-spacing: 0.02em;
-    color: #4a4030;
+    padding-left: 8px;
+    font-size: 0.74rem;
+    color: #000000;
     white-space: nowrap;
-    border-right: 1px solid var(--rule);
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
   }
   .era span{
     position: sticky;
-    left: 10px;
+    left: 8px;
   }
 
   .spine-wrap{
@@ -202,8 +205,8 @@
     background: var(--accent);
   }
   .increment:focus-visible{
-    outline: 2px solid var(--accent);
-    outline-offset: -2px;
+    outline: 1px dotted #000000;
+    outline-offset: -1px;
   }
   .increment.active .tick{
     background: var(--accent);
@@ -223,17 +226,17 @@
     background: var(--rule);
     pointer-events: none;
   }
-  .tick.minor{ height: 12px; margin-top: -6px; }
-  .tick.mid{ height: 20px; margin-top: -10px; background: #8f846d; }
-  .tick.major{ height: 34px; margin-top: -17px; background: var(--ink); width: 1.5px; }
+  .tick.minor{ height: 10px; margin-top: -5px; }
+  .tick.mid{ height: 18px; margin-top: -9px; background: #666666; }
+  .tick.major{ height: 30px; margin-top: -15px; background: var(--ink); width: 1px; }
 
   .info-dot{
     position: absolute;
     top: 50%;
-    margin-top: 20px;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
+    margin-top: 18px;
+    width: 6px;
+    height: 6px;
+    border: 1px solid #000000;
     background: var(--accent);
     pointer-events: none;
   }
@@ -241,10 +244,11 @@
   .label{
     position: absolute;
     top: 50%;
-    margin-top: 26px;
+    margin-top: 24px;
     transform: translateX(-50%);
-    font-size: 0.78rem;
-    font-weight: 700;
+    font-size: 0.72rem;
+    font-weight: bold;
+    font-family: monospace;
     color: var(--ink);
     white-space: nowrap;
     pointer-events: none;
@@ -253,10 +257,11 @@
   .start-flag, .now-flag-label{
     position: absolute;
     top: 50%;
-    margin-top: -58px;
+    margin-top: -54px;
     transform: translateX(-50%);
-    font-size: 0.78rem;
-    font-weight: 700;
+    font-size: 0.72rem;
+    font-weight: bold;
+    font-family: monospace;
     white-space: nowrap;
     pointer-events: none;
   }
@@ -264,26 +269,25 @@
   .popup{
     position: absolute;
     top: 50%;
-    margin-top: -22px;
+    margin-top: -18px;
     transform: translate(-50%, -100%);
     background: var(--popup-bg);
-    border: 1.5px solid var(--ink);
-    border-radius: 4px;
-    padding: 10px 12px;
-    min-width: 180px;
-    max-width: 260px;
-    box-shadow: 3px 3px 0 rgba(38,32,25,0.15);
+    border: 2px solid #000000;
+    padding: 8px 10px;
+    min-width: 170px;
+    max-width: 250px;
     z-index: 20;
-    font-size: 0.82rem;
-    line-height: 1.35;
+    font-size: 0.8rem;
+    line-height: 1.3;
   }
   .popup .popup-year{
-    font-weight: 700;
+    font-weight: bold;
     margin-bottom: 4px;
     display: block;
+    text-decoration: underline;
   }
   .popup .popup-empty{
-    color: #7a7160;
+    color: #555555;
     font-style: italic;
   }
   .popup .popup-event{
@@ -293,33 +297,8 @@
     align-items: flex-start;
   }
   .popup .popup-event .swatch{
-    margin-top: 5px;
+    margin-top: 4px;
     flex: 0 0 auto;
-  }
-  .popup::after{
-    content: "";
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-top: 8px solid var(--ink);
-  }
-  .popup::before{
-    content: "";
-    position: absolute;
-    bottom: -5.5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 7px solid var(--popup-bg);
-    z-index: 1;
   }
 
   /* ---- minimap ---- */
@@ -329,8 +308,8 @@
     right: 0;
     bottom: 0;
     height: 16px;
-    background: var(--band-b);
-    border-top: 1px solid var(--rule);
+    background: #d9d9d9;
+    border-top: 1px solid #000000;
     cursor: pointer;
     z-index: 30;
   }
@@ -339,10 +318,11 @@
     top: 0;
     bottom: 0;
     background: var(--accent);
-    opacity: 0.55;
+    opacity: 0.5;
     pointer-events: none;
   }
 </style>
+
 </head>
 <body>
 
@@ -394,6 +374,7 @@
   const CURRENT_YEAR = 2026;
   const STEP = 50;             // years per increment
   let PX_PER_STEP = 90;        // pixels between increments (adjustable via zoom)
+  const PAD_LEFT = 150;        // fixed breathing room so the 10,000 BCE tick isn't clipped by the scroller's left edge
   const MAJOR_EVERY = 10;      // every 10th increment (500 yrs) gets a permanent label
   const MID_EVERY = 2;         // every 2nd increment (100 yrs) gets a mid-size tick
 
@@ -649,7 +630,7 @@
     return START_YEAR + i * STEP;
   }
   function stepToX(i){
-    return i * PX_PER_STEP;
+    return PAD_LEFT + i * PX_PER_STEP;
   }
   function yearToStepIdx(y){
     return Math.round((y - START_YEAR) / STEP);
@@ -756,23 +737,24 @@
 
   // ---- relayout (used on zoom change) ----
   function relayout(){
-    const totalWidth = totalSteps * PX_PER_STEP + 200;
+    const totalWidth = totalSteps * PX_PER_STEP + PAD_LEFT + 200;
     track.style.width = totalWidth + "px";
 
     incrementEls.forEach((btn, i) => {
-      btn.style.left = (i * PX_PER_STEP) + "px";
+      btn.style.left = (PAD_LEFT + i * PX_PER_STEP) + "px";
       btn.style.width = PX_PER_STEP + "px";
     });
     eraDivs.forEach(o => {
       o.div.style.width = ((o.endIdx - o.startIdx) * PX_PER_STEP) + "px";
     });
+    erasRow.style.paddingLeft = PAD_LEFT + "px";
 
-    const todayX = todayIdx * PX_PER_STEP;
+    const todayX = PAD_LEFT + todayIdx * PX_PER_STEP;
     todayBtn.style.left = todayX + "px";
     todayBtn.style.width = PX_PER_STEP + "px";
     todayLabel.style.left = todayX + "px";
     todayLabel.style.transform = "translateX(-50%)";
-    startFlag.style.left = "0px";
+    startFlag.style.left = PAD_LEFT + "px";
 
     closePopup();
     updateMinimap();
@@ -905,7 +887,7 @@
   scroller.addEventListener('pointerdown', stopPlaying);
 
   function scrollToStepIdx(idx, openPopupToo){
-    const x = idx * PX_PER_STEP;
+    const x = PAD_LEFT + idx * PX_PER_STEP;
     scroller.scrollLeft = Math.max(0, x - scroller.clientWidth / 2);
     if (openPopupToo) openForOrphanClose(idx);
   }
@@ -977,7 +959,7 @@
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
 
     const allIdx = sortedEventStepIndices.concat([todayIdx]).sort((a,b) => a-b);
-    const approx = Math.round(scroller.scrollLeft / PX_PER_STEP);
+    const approx = Math.round((scroller.scrollLeft - PAD_LEFT) / PX_PER_STEP);
 
     let target;
     if (e.key === 'ArrowRight'){
